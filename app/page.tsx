@@ -4,10 +4,13 @@ export default function RootPage() {
       <div>
         Root Page
         <li>
-          <a href="desmos/">desmos/</a>
+          <a href="vanilla/">vanilla/</a>
         </li>
         <li>
-          <a href="vanilla/">vanilla/</a>
+          <a href="noopRAF/">noopRAF/</a>
+        </li>
+        <li>
+          <a href="desmos/">desmos/</a>
         </li>
       </div>
     </body>

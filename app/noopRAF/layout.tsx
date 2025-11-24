@@ -6,12 +6,12 @@ export default function RootLayout({
   return (
     <>
       <head>
-        {/* <script src="/mock-calculator.js" /> */}
+        <script src="/mock-calculator.js" />
         {/* <script src="https://www.desmos.com/api/v1.11.3/calculator.js?apiKey=f6c2c8deef9e465b85041e9b19af02e5" /> */}
       </head>
       <body>
         <h3>
-          Layout: No RAF script is loaded
+          Layout: <a href="/mock-calculator.js">mock-calculator.js (NOOP RAF)</a> script is <b>loaded</b>
         </h3>
         {children}
       </body>
