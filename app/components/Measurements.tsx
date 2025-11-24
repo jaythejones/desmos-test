@@ -44,6 +44,8 @@ export default function Home() {
   const frameStartTimeRef = useRef<number | null>(null);
   const blockingFramesBatchRef = useRef<number[]>([]);
   const blockingFramesCountRef = useRef<number>(0);
+  const rafCallsInLastSecondRef = useRef<number>(0);
+  const rafCallTimestampsRef = useRef<number[]>([]);
 
   // Scroll to bottom when new logs are added
   // useEffect(() => {
@@ -69,6 +71,14 @@ export default function Home() {
       rafCallCountRef.current++;
       rafQueueRef.current++;
       const now = Date.now();
+      
+      // Track RAF call timestamps for rate calculation
+      rafCallTimestampsRef.current.push(now);
+      // Keep only timestamps from the last second
+      rafCallTimestampsRef.current = rafCallTimestampsRef.current.filter(
+        (ts) => now - ts < 1000
+      );
+      rafCallsInLastSecondRef.current = rafCallTimestampsRef.current.length;
 
       // Track when frame starts
       const frameStart = performance.now();
@@ -191,7 +201,7 @@ export default function Home() {
         // Update metrics
         setMetrics((prev) => ({
           ...prev,
-          rafCallRate: rafCallCountRef.current,
+          rafCallRate: rafCallsInLastSecondRef.current,
           avgFrameTime,
           queuedRAF: rafQueueRef.current,
           isBlocking: avgFrameTime > 16.67 || rafQueueRef.current > 5,
@@ -217,6 +227,29 @@ export default function Home() {
       window.requestAnimationFrame = originalRAF;
     };
   }, [addLog]);
+
+  // Periodically update metrics to keep RAF call rate current
+  useEffect(() => {
+    const updateMetrics = () => {
+      const now = Date.now();
+      // Filter timestamps to only include last second
+      rafCallTimestampsRef.current = rafCallTimestampsRef.current.filter(
+        (ts) => now - ts < 1000
+      );
+      rafCallsInLastSecondRef.current = rafCallTimestampsRef.current.length;
+
+      setMetrics((prev) => ({
+        ...prev,
+        rafCallRate: rafCallsInLastSecondRef.current,
+        queuedRAF: rafQueueRef.current,
+      }));
+    };
+
+    // Update metrics every 100ms for responsive UI
+    const interval = setInterval(updateMetrics, 100);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Track click events
   useEffect(() => {
