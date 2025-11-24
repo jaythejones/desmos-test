@@ -22,16 +22,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <head>
-        <script src="https://www.desmos.com/api/v1.11/calculator.js?apiKey=f6c2c8deef9e465b85041e9b19af02e5" />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+  return <html lang="en">{children}</html>;
 }
